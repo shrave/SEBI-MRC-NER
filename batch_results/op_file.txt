@@ -1,0 +1,198 @@
+==========================================
+SLURM_JOB_ID = 312035
+SLURM_NODELIST = gnode34
+SLURM_JOB_GPUS = 0,1,2,3
+==========================================
+Better speed can be achieved with apex installed from https://www.github.com/nvidia/apex.
+Better speed can be achieved with apex installed from https://www.github.com/nvidia/apex.
+Please notice that merge the args_dict and json_config ... ...
+{
+  "bert_frozen": "false",
+  "hidden_size": 768,
+  "hidden_dropout_prob": 0.2,
+  "classifier_sign": "multi_nonlinear",
+  "clip_grad": 1,
+  "bert_config": {
+    "attention_probs_dropout_prob": 0.1,
+    "hidden_act": "gelu",
+    "hidden_dropout_prob": 0.1,
+    "hidden_size": 768,
+    "initializer_range": 0.02,
+    "intermediate_size": 3072,
+    "max_position_embeddings": 512,
+    "num_attention_heads": 12,
+    "num_hidden_layers": 12,
+    "type_vocab_size": 2,
+    "vocab_size": 30522
+  },
+  "config_path": "/home2/shravya.k/SEBI-MRC-NER/config/en_bert_base_uncased.json",
+  "data_dir": "/home2/shravya.k/ace2004",
+  "bert_model": "/home2/shravya.k/uncased_L-12_H-768_A-12",
+  "task_name": null,
+  "max_seq_length": 150,
+  "train_batch_size": 4,
+  "dev_batch_size": 4,
+  "test_batch_size": 4,
+  "checkpoint": 100,
+  "learning_rate": 4e-05,
+  "num_train_epochs": 10,
+  "warmup_proportion": -1.0,
+  "local_rank": -1,
+  "gradient_accumulation_steps": 1,
+  "seed": 2333,
+  "export_model": true,
+  "output_dir": "/scratch/shravya.k/mrc-ner/ace2004/mrc-ner-ace2004-22_1-150-4e-05-4-0.2",
+  "data_sign": "ace2004",
+  "weight_start": 1.0,
+  "weight_end": 1.0,
+  "weight_span": 0.9,
+  "entity_sign": "nested",
+  "n_gpu": 1,
+  "dropout": 0.2,
+  "entity_threshold": 0.5,
+  "data_cache": false
+}
+-*--*--*--*--*--*--*--*--*--*-
+current data_sign: ace2004
+=*==*==*==*==*==*==*==*==*==*=
+loading train data ... ...
+43414
+43414 train data loaded
+=*==*==*==*==*==*==*==*==*==*=
+loading dev data ... ...
+5215
+5215 dev data loaded
+=*==*==*==*==*==*==*==*==*==*=
+loading test data ... ...
+5684
+5684 test data loaded
+######################################################################
+EPOCH:  0
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+current training loss is : 
+0.010100578889250755
+/home2/shravya.k/SEBI-MRC-NER/layer/optim.py:90: UserWarning: This overload of add_ is deprecated:
+	add_(Number alpha, Tensor other)
+Consider using one of the following signatures instead:
+	add_(Tensor other, *, Number alpha) (Triggered internally at  /pytorch/torch/csrc/utils/python_arg_parser.cpp:882.)
+  exp_avg.mul_(beta1).add_(1.0 - beta1, grad)
+true positives
+0
+............................................................
+DEV: loss, acc, precision, recall, f1
+0.0236 0.9969 0.0 0.0 0.0
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+current training loss is : 
+0.009874108247458935
+true positives
+0
+............................................................
+DEV: loss, acc, precision, recall, f1
+0.0227 0.997 0.0 0.0 0.0
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+current training loss is : 
+0.17407676577568054
+true positives
+28
+............................................................
+DEV: loss, acc, precision, recall, f1
+0.0182 0.997 0.5957 0.0111 0.0219
+SAVED model path is :
+/scratch/shravya.k/mrc-ner/ace2004/mrc-ner-ace2004-22_1-150-4e-05-4-0.2/bert_finetune_model_0_300.pt
+true positives
+2
+............................................................
+TEST: loss, acc, precision, recall, f1
+0.0196 0.9967 1.0 0.0007 0.0013
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+current training loss is : 
+0.013171086087822914
+true positives
+0
+............................................................
+DEV: loss, acc, precision, recall, f1
+0.0158 0.9971 0.0 0.0 0.0
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+current training loss is : 
+0.05145420506596565
+true positives
+0
+............................................................
+DEV: loss, acc, precision, recall, f1
+0.0161 0.9972 0.0 0.0 0.0
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+current training loss is : 
+0.031739190220832825
+true positives
+0
+............................................................
+DEV: loss, acc, precision, recall, f1
+0.0111 0.9981 0.0 0.0 0.0
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+current training loss is : 
+0.0011894120834767818
+true positives
+0
+............................................................
+DEV: loss, acc, precision, recall, f1
+0.0104 0.9983 0.0 0.0 0.0
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+current training loss is : 
+0.0009997676825150847
+true positives
+0
+............................................................
+DEV: loss, acc, precision, recall, f1
+0.0094 0.9984 0.0 0.0 0.0
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+current training loss is : 
+0.0013177180662751198
+true positives
+0
+............................................................
+DEV: loss, acc, precision, recall, f1
+0.0095 0.9985 0.0 0.0 0.0
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+current training loss is : 
+0.0024703633971512318
+true positives
+142
+............................................................
+DEV: loss, acc, precision, recall, f1
+0.0088 0.9984 0.6698 0.0565 0.1042
+SAVED model path is :
+/scratch/shravya.k/mrc-ner/ace2004/mrc-ner-ace2004-22_1-150-4e-05-4-0.2/bert_finetune_model_0_1000.pt
+true positives
+136
+............................................................
+TEST: loss, acc, precision, recall, f1
+0.0105 0.9982 0.8144 0.0448 0.085
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+current training loss is : 
+0.008160272613167763
+true positives
+16
+............................................................
+DEV: loss, acc, precision, recall, f1
+0.0083 0.9986 0.8 0.0064 0.0126
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+current training loss is : 
+0.0032843141816556454
+true positives
+455
+............................................................
+DEV: loss, acc, precision, recall, f1
+0.0075 0.9987 0.5745 0.181 0.2753
+SAVED model path is :
+/scratch/shravya.k/mrc-ner/ace2004/mrc-ner-ace2004-22_1-150-4e-05-4-0.2/bert_finetune_model_0_1200.pt
