@@ -9,7 +9,7 @@ FOLDER_PATH=/home2/shravya.k/SEBI-MRC-NER
 CONFIG_PATH=${FOLDER_PATH}/config/en_bert_base_uncased.json
 DATA_PATH=/home2/shravya.k/ace2004
 BERT_PATH=/home2/shravya.k/uncased_L-12_H-768_A-12
-EXPORT_DIR=/scratch/shravya.k/mrc-ner
+EXPORT_DIR=/scratch/shravya.k/ace2004
 
 
 max_seq_length=150
@@ -17,19 +17,19 @@ learning_rate=4e-05
 start_loss_ratio=1.0
 end_loss_ratio=1.0
 span_loss_ratio=0.9
-dropout=0.2
-train_batch_size=4
-dev_batch_size=4
-test_batch_size=4
+dropout=0.1
+train_batch_size=8
+dev_batch_size=8
+test_batch_size=8
 max_train_expoch=10
 warmup_proportion=-1
 gradient_accumulation_step=1
-checkpoint=100
+checkpoint=600
 seed=2333
 n_gpu=1
 data_sign=ace2004
 entity_sign=nested
-model_sign=mrc-ner
+model_sign=ace2004
 output_path=${EXPORT_DIR}/${data_sign}/${model_sign}-${data_sign}-${EXP_ID}-${max_seq_length}-${learning_rate}-${train_batch_size}-${dropout}
 
 

@@ -52,7 +52,8 @@ def args_parser():
     parser.add_argument("--seed", type=int, default=3006)
     parser.add_argument("--export_model", type=bool, default=True)
     parser.add_argument("--output_dir", type=str, default="/scratch/shravya.k/output")
-    parser.add_argument("--data_sign", type=str, default="ace2004")
+    parser.add_argument("--data_sign_og", type=str, default="ace2004")
+    parser.add_argument("--data_sign_fine", type=str, default="sebi")
     parser.add_argument("--weight_start", type=float, default=1.0) 
     parser.add_argument("--weight_end", type=float, default=1.0) 
     parser.add_argument("--weight_span", type=float, default=1.0) 
@@ -77,32 +78,38 @@ def args_parser():
 
 
 def load_data(config):
-
+    process_dict = {"conll03":Conll03Processor(), "zh_msra":MSRAProcessor(), "zh_onto":Onto4ZhProcessor(), "en_onto":Onto5EngProcessor(), "genia":GeniaProcessor(), "ace2004":ACE2004Processor(), "ace2005":ACE2005Processor(), "resume": ResumeZhProcessor(), "sebi":SebiProcessor()}
     print("-*-"*10)
-    print("current data_sign: {}".format(config.data_sign))
-
-    if config.data_sign == "conll03":
-        data_processor = Conll03Processor()
-    elif config.data_sign == "zh_msra":
-        data_processor = MSRAProcessor()
-    elif config.data_sign == "zh_onto":
-        data_processor = Onto4ZhProcessor()
-    elif config.data_sign == "en_onto":
-        data_processor = Onto5EngProcessor()
-    elif config.data_sign == "genia":
-        data_processor = GeniaProcessor()
-    elif config.data_sign == "ace2004":
-        data_processor = ACE2004Processor()
-    elif config.data_sign == "sebi":
-        data_processor = SebiProcessor()
-    elif config.data_sign == "ace2005":
-        data_processor = ACE2005Processor()
-    elif config.data_sign == "resume":
-            data_processor = ResumeZhProcessor()
-    else:
-        raise ValueError("Please Notice that your data_sign DO NOT exits !!!!!")
-
+    print("original data_sign: {}".format(config.data_sign_og))
+    
+    data_processor = process_dict[config.data_sign_og]
     label_list = data_processor.get_labels()
+    data_processor = process_dict[config.data_sign_fine]
+    label_list.extend(data_processor.get_labels())
+    label_list = list(set(label_list))
+    #if config.data_sign_og == "conll03":
+     #   data_processor = Conll03Processor()
+    #elif config.data_sign_og == "zh_msra":
+     #   data_processor = MSRAProcessor()
+    #elif config.data_sign_og == "zh_onto":
+     #   data_processor = Onto4ZhProcessor()
+    #elif config.data_sign_og == "en_onto":
+    #    data_processor = Onto5EngProcessor()
+    #elif config.data_sign_og == "genia":
+    #    data_processor = GeniaProcessor()
+    #elif config.data_sign_og == "ace2004":
+    #    data_processor = ACE2004Processor()
+    #elif config.data_sign_og == "sebi":
+    #    data_processor = SebiProcessor()
+    #elif config.data_sign_og == "ace2005":
+     #   data_processor = ACE2005Processor()
+    #elif config.data_sign_og == "resume":
+     #       data_processor = ResumeZhProcessor()
+    #else:
+     #   raise ValueError("Please Notice that your data_sign DO NOT exits !!!!!")
+
+    #label_list = data_processor.get_labels()
+    #label_list.extend(SebiProcessor().get_labels())
     tokenizer = BertTokenizer4Tagger.from_pretrained(config.bert_model, do_lower_case=True)
 
     dataset_loaders = MRCNERDataLoader(config, data_processor, label_list, tokenizer, mode="train", allow_impossible=True)
@@ -122,15 +129,24 @@ def load_model(config, num_train_steps, label_list):
     n_gpu = config.n_gpu
 
     model = BertQueryNER(config)
+    model.to(device)
     checkpoint = torch.load(config.saved_model)
+    param_optimizer = list(model.named_parameters())
+    no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
+    optimizer_grouped_parameters = [
+    {"params": [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], "weight_decay": 0.01},
+    {"params": [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], "weight_decay": 0.0}]
+
     optimizer = AdamW(optimizer_grouped_parameters, lr=config.learning_rate, eps=10e-8)
+    #optimizer = AdamW(model.named_parameters(), lr=config.learning_rate, eps=10e-8)
     #checkpoint = torch.load('load/from/path/model.pth')
     model.load_state_dict(checkpoint['model_state_dict'])
+    #optimizer = AdamW(model.named_parameters(), lr=config.learning_rate, eps=10e-8)
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     epoch = checkpoint['epoch']
     loss = checkpoint['loss']
     
-    model.to(device)
+    #model.to(device)
     if config.n_gpu > 1:
         model = torch.nn.DataParallel(model)
 

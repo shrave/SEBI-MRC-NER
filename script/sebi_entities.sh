@@ -8,7 +8,7 @@ DATE=2021.4.1
 EXP_ID=22_1
 FOLDER_PATH=/home2/shravya.k/SEBI-MRC-NER 
 CONFIG_PATH=${FOLDER_PATH}/config/en_bert_base_uncased.json
-DATA_PATH=/home2/shravya.k/sebi_normal
+DATA_PATH=/home2/shravya.k/sebi_norm
 BERT_PATH=/home2/shravya.k/uncased_L-12_H-768_A-12
 EXPORT_DIR=/scratch/shravya.k/mrc-ner
 

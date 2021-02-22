@@ -79,9 +79,12 @@ def nested_transform_span_triple(start_labels, end_labels, span_labels, ner_cate
         if len(tmp_end) == 0:
             continue 
         for candidate_end in tmp_end:
-            if span_labels[tmp_start][candidate_end] >= threshold:
-                tmp_tag = nest_span_f1.Tag(ner_cate, tmp_start, candidate_end)
-                span_triple_lst.append(tmp_tag)
+            #print(type(span_labels[tmp_start]))
+            #print(span_labels[tmp_start])
+            if type(span_labels[tmp_start]) == list:
+                if span_labels[tmp_start][candidate_end] >= threshold:
+                    tmp_tag = nest_span_f1.Tag(ner_cate, tmp_start, candidate_end)
+                    span_triple_lst.append(tmp_tag)
 
     return span_triple_lst 
 
@@ -189,6 +192,7 @@ def nested_ner_performance(pred_start, pred_end, pred_span, \
 
 
         span_precision, span_recall, span_f1 = nest_span_f1.nested_calculate_f1(pred_span_triple_lst, gold_span_triple_lst, dims=2)
+#        full_list = nest_span_f1.nested_calculate_f1_macros(pred_span_triple_lst, gold_span_triple_lst, label_lst, dims=2)
         average_acc = sum(acc_lst)/ (len(acc_lst) * 1.0 )
 
         return average_acc, span_precision, span_recall, span_f1 

@@ -107,25 +107,21 @@ def main():
     args_config = args_parser()
     config = merge_config(args_config)
     test_loader, label_list = load_data(config)
-    model, device, n_gpu = load_model(config, label_list,)
+    model, device, n_gpu = load_model(config, label_list)
     predicted_list = show_outputs(model, test_loader, config, device, n_gpu, label_list, eval_sign="test")
     acc, pre, rec, f1 = eval_checkpoint(model, test_loader, config, device, n_gpu, label_list, eval_sign="test")
     
-
-
 def load_model(config, label_list):
     device = torch.device("cuda")
     n_gpu = config.n_gpu 
     model = BertQueryNER(config)
     checkpoint = torch.load(config.saved_model)
-    model.load_state_dict(checkpoint)
+    model.load_state_dict(checkpoint['model_state_dict'])
     model.to(device)
     if config.n_gpu >1 :
         model = torch.nn.DataParallel(model)
 
     return model, device, n_gpu 
-
-
 
 def eval_checkpoint(model_object, eval_dataloader, config, \
     device, n_gpu, label_list, eval_sign="test"):
@@ -180,8 +176,7 @@ def eval_checkpoint(model_object, eval_dataloader, config, \
     if config.entity_sign == "flat":
         acc, pre, rec, f1 = flat_ner_performance(start_pred_lst, end_pred_lst, span_pred_lst, start_gold_lst, end_gold_lst, span_gold_lst, ner_cate_lst, label_list, threshold=config.entity_threshold, dims=2) 
     else:
-        acc, pre, rec, f1 = nested_ner_performance(start_pred_lst, end_pred_lst, span_pred_lst, start_gold_lst, end_gold_lst, span_gold_lst, ner_cate_lst, label_list, threshold=config.entity_threshold, dims=2)
-
+        acc, pre, rec, f1 = nested_ner_performance(start_pred_lst, end_pred_lst, span_pred_lst, start_gold_lst, end_gold_lst, span_gold_lst, ner_cate_lst, label_list, threshold=config.entity_threshold, dims=2) 
 
     print("=*="*10)
     print("eval: acc, pre, rec, f1")
@@ -214,6 +209,7 @@ def show_outputs(model_object, eval_dataloader, config, \
         start_pos = start_pos.to(device)
         end_pos = end_pos.to(device)
         span_pos = span_pos.to(device)
+        #contexts
         #contexts = contexts.to(device)
 
         with torch.no_grad():
@@ -226,6 +222,7 @@ def show_outputs(model_object, eval_dataloader, config, \
         start_label = start_logits.detach().cpu().numpy().tolist()
         end_label = end_logits.detach().cpu().numpy().tolist()
         span_label = span_logits.detach().cpu().numpy().tolist()
+        #contexts
         #contexts = contexts.detach().cpu().numpy().tolist()
         
         input_mask = input_mask.to("cpu").detach().numpy().tolist()
@@ -240,30 +237,24 @@ def show_outputs(model_object, eval_dataloader, config, \
         start_gold_lst += start_pos 
         end_gold_lst += end_pos 
         span_gold_lst += span_pos 
+        #contexts_lst
         #contexts_lst += contexts
     
     if config.entity_sign == "flat":
         acc, pre, rec, f1 = flat_ner_performance(start_pred_lst, end_pred_lst, span_pred_lst, start_gold_lst, end_gold_lst, span_gold_lst, ner_cate_lst, label_list, threshold=config.entity_threshold, dims=2) 
     else:
         predicted_list = nested_ner_prediction(start_pred_lst, end_pred_lst, span_pred_lst, start_gold_lst, end_gold_lst, span_gold_lst, ner_cate_lst, label_list, threshold=config.entity_threshold, dims=2)
-
-    #print(len(predicted_list))
-    #print(len(predicted_list[0]))
+    count = 0
     for instance, sentence in zip(predicted_list, contexts):
+        count += 1
+        print(count)
+        print("Sentence:", sentence)
         for tag in instance:
             ner_cate, pred_start, pred_end = tag.to_tuple()
-            #print(pred_start, pred_end, ner_cate)
-            print(ner_cate)
-            print(sentence[int(pred_start):int(pred_end)])
-    #print('This is the predicted list')
-    #print(predicted_list)
+            print("Label:", ner_cate)
+            print("Span: ", sentence[int(pred_start):int(pred_end)])
     return predicted_list
 
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
